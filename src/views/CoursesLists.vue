@@ -40,8 +40,9 @@
                     class="body-2 font-weight-bold text-capitalize"
                     color="primary"
                     text
-                    >Ver Detalles</v-btn
-                  >
+                    >Ver Detalles
+                  
+                  </v-btn>
                 </template>
 
                 <v-card class="rounded-xl">
