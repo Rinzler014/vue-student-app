@@ -1,15 +1,17 @@
 <template>
   <v-container>
+
     <v-row justify="center">
+
       <v-col cols="12">
         <h1 class="display-2 font-weight-bold text-center py-10 primary--text">
-          Información del Alumno
+          Informacion del Alumno
         </h1>
         <div
           style="display: flex; justify-content: center; align-items: center"
         >
           <v-avatar width="150" height="150" align="center">
-            <img src="@/assets/avatar.jpeg" alt="" srcset="" />
+            <img :src="user.image" alt="" srcset="" />
           </v-avatar>
         </div>
       </v-col>
@@ -23,7 +25,7 @@
             Nombre Completo
           </h1>
           <p :class="$vuetify.breakpoint.xsOnly ? 'text-center' : 'text-start'">
-            Ricardo Adolfo González Terán
+            {{ user.name }}
           </p>
         </div>
       </v-col>
@@ -37,7 +39,7 @@
             Matricula
           </h1>
           <p :class="$vuetify.breakpoint.xsOnly ? 'text-center' : 'text-start'">
-            A01769410
+            {{ user.student_id }}
           </p>
         </div>
       </v-col>
@@ -53,7 +55,7 @@
             Correo Institucional
           </h1>
           <p :class="$vuetify.breakpoint.xsOnly ? 'text-center' : 'text-start'">
-            A01769410@tec.mx
+            {{ user.institutional_mail }}
           </p>
         </div>
       </v-col>
@@ -83,20 +85,55 @@
             Correo Personal
           </h1>
           <p :class="$vuetify.breakpoint.xsOnly ? 'text-center' : 'text-start'">
-            A01769410@tec.mx
+            {{ user.personal_mail }}
           </p>
         </div>
       </v-col>
     </v-row>
+
+    
     
   </v-container>
 </template>
 
 <script>
-export default {
-  name: "Home",
-  data: () => ({
-    //
-  }),
-};
+
+  import firebase from "firebase/compat";
+  
+  export default {
+    name: "Home",
+
+    async created() {
+      
+      this.user = await this.getUser();
+
+    },
+
+    data: () => ({
+      
+      user: null,
+
+    }),
+
+    methods: {
+
+      async getUser() {
+        const user = await firebase
+          .firestore()
+          .collection("users")
+          .doc(firebase.auth().currentUser.uid)
+          .get();
+        return user.data();
+      },
+
+      async logout() {
+      
+        await firebase.auth().signOut();
+        this.$router.push("/");
+      
+      },
+
+    },
+
+  };
 </script>

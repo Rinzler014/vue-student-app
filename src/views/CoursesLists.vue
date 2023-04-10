@@ -81,7 +81,7 @@
                                 : 'font-weight-bold mb-5 secondary--text'
                             "
                           >
-                            Salón: {{ course.classroom }}
+                            Salón: {{ course.classRoom }}
                           </h2>
                         </v-col>
 
@@ -137,51 +137,38 @@
 </template>
 
 <script>
-import { courses } from "../data/courses.js";
 import firebase from "firebase/compat";
 
 export default {
+
   name: "CoursesLists",
   async mounted() {
-    await this.login();
-    await this.createFirestoreDocForNewUser();
+    
+    await this.getCourses();
+    
   },
-  data() {
-    return {
-      courses: courses,
+
+  data: () => ({
+      
+      courses: [],
       dialogs: {},
-    };
-  },
+
+  }),
+
   methods: {
-    async login() {
-      await firebase
-        .auth()
-        .signInWithEmailAndPassword(
-          "ricardo_glez_14@icloud.com",
-          "Peluche343@"
-        );
-      await firebase
+
+    async getCourses() {
+      firebase
         .firestore()
-        .collection("users")
-        .doc(firebase.auth().currentUser.email)
-        .update({
-          lastLogIn: firebase.firestore.FieldValue.serverTimestamp(),
+        .collection("courses")
+        .get()
+        .then((querySnapshot) => {
+          querySnapshot.forEach((doc) => {
+            this.courses.push(doc.data());
+          });
         });
     },
 
-    async logout() {
-      await firebase.auth().signOut();
-    },
-
-    async createFirestoreDocForNewUser() {
-      const email = firebase.auth().currentUser.email;
-
-      await firebase.firestore().collection("users").doc(email).set({
-        name: "Ricardo",
-        email: email,
-        lastLogIn: firebase.firestore.FieldValue.serverTimestamp(),
-      });
-    },
   },
 };
 </script>
